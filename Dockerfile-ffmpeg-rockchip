@@ -1,0 +1,174 @@
+FROM debian:12-slim AS ffmpeg
+
+SHELL ["/bin/bash", "-c"]
+
+ARG WORKDIR='/tmp'
+WORKDIR "${WORKDIR}"
+
+# Install deps
+RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/debian.sources && \
+    apt update -qq && apt -y install \
+      autoconf \
+      automake \
+      build-essential \
+      cmake \
+      git-core \
+      libass-dev \
+      libfreetype6-dev \
+      libgnutls28-dev \
+      libmp3lame-dev \
+      libtool \
+      meson \
+      ninja-build \
+      pkg-config \
+      texinfo \
+      wget \
+      yasm \
+      nasm \
+      zlib1g-dev \
+      libvpx-dev \
+      libfdk-aac-dev \
+      libdav1d-dev \
+      libx264-dev \
+      libx265-dev \
+      libnuma-dev \
+      libopus-dev \
+      libaom-dev \
+      libva-dev \
+      libvdpau-dev \
+      libvorbis-dev \
+      libxcb1-dev \
+      libxcb-shm0-dev \
+      libxcb-xfixes0-dev \
+      libdrm-dev
+
+# Build MPP
+RUN mkdir -p build && cd build && \
+    git clone -b jellyfin-mpp --depth=1 https://github.com/nyanmisaka/mpp.git rkmpp && \
+    pushd rkmpp && \
+    mkdir rkmpp_build && \
+    pushd rkmpp_build && \
+    cmake \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON \
+      -DBUILD_TEST=OFF \
+      .. && \
+    make -j $(nproc) && \
+    make install && \
+# Build RGA
+    cd ${WORKDIR}/build && \
+    git clone -b jellyfin-rga --depth=1 https://github.com/nyanmisaka/rk-mirrors.git rkrga && \
+    meson setup rkrga rkrga_build \
+      --prefix=/usr/local \
+      --libdir=lib \
+      --buildtype=release \
+      --default-library=shared \
+      -Dcpp_args=-fpermissive \
+      -Dlibdrm=false \
+      -Dlibrga_demo=false && \
+    meson configure rkrga_build && \
+    ninja -C rkrga_build install && \
+# Build ffmpeg
+    git clone --depth=1 https://github.com/nyanmisaka/ffmpeg-rockchip.git ffmpeg && \
+    cd ffmpeg && \
+    ./configure \
+      --prefix=/usr/local \
+      --extra-libs="-lpthread -lm" \
+      --enable-gnutls \
+      --enable-gpl \
+      --enable-nonfree \
+      --enable-libass \
+      --enable-libfreetype \
+      --enable-libfdk-aac \
+      --enable-libvpx \
+      --enable-libdav1d \
+      --enable-libx264 \
+      --enable-libx265 \
+      --enable-libmp3lame \
+      --enable-libaom \
+      --enable-version3 \
+      --enable-libdrm \
+      --enable-rkmpp \
+      --enable-rkrga && \
+    make -j $(nproc) && \
+    make install
+
+# Init target runner
+FROM node:20-slim AS runner
+
+SHELL ["/bin/bash", "-c"]
+
+ENV FFMPEG_PATH=/usr/local/bin/ffmpeg
+ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+
+COPY --from=ffmpeg /usr/local/ /usr/local/
+
+RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/debian.sources && \
+    apt update && apt install -y \
+      libva-drm2 \
+      libsdl2-2.0-0 \
+      libsndio7.0 \
+      libxv1 \
+      libfdk-aac2 \
+      libasound2 \
+      libaom3 \
+      libdav1d6 && \
+    apt install -y \
+      libass9 \
+      libsrt1.5-gnutls \
+      libmp3lame0 \
+      libvpx7 \
+      libx264-164 \
+      libx265-199 \
+      libopus0 \
+      libva2 \
+      libvdpau1 \
+      libvorbis0a \
+      libvorbisenc2 \
+      libvorbisfile3 \
+      libxcb-dri2-0 \
+      libxcb-dri3-0 \
+      libxcb-glx0 \  
+      libxcb-present0 \
+      libxcb-randr0 \ 
+      libxcb-render0 \
+      libxcb-shape0 \
+      libxcb-shm0 \  
+      libxcb-sync1 \
+      libxcb-xfixes0 && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/*
+
+COPY files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
+
+# Install peertube-runner
+RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.2"}
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+ENTRYPOINT [ "entrypoint" ]
+CMD [ "peertube-runner", "server" ]
+
+FROM runner AS whisper_ctranslate2
+
+USER root:root
+
+RUN apt update && \
+    apt install -y python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/*
+
+RUN pip3 install whisper-ctranslate2==0.4.6 --break-system-packages
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+ENV PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE="whisper-ctranslate2"
+
+ENV PEERTUBE_RUNNER_TRANSCRIPTION_MODEL="tiny"
+
+ENV PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH="/usr/local/bin/whisper-ctranslate2"
