@@ -5,11 +5,11 @@ The generated image should be run as an Un-privileged user.
 
 ## Build
 
-To build the image, run `make build`. The `build` task generates an image with the tag `peertube-runner:latest`.
+To build the image, run `make build`. The `build` task generates an image with the tag `peertube-runner-rockchip:latest`.
 
 To build the image with the [whisper-ctranslate2](https://pypi.org/project/whisper-ctranslate2/#description) for translation run
 `make build-whisper_ctranslate2`. This will build image with the tag
-`peertube-runner:latest-whisper_ctranslate2`.
+`peertube-runner-rockchip:latest-ctranslate`.
 
 ## Configuration
 
