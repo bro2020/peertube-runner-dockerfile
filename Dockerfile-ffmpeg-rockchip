@@ -95,7 +95,7 @@ RUN mkdir -p build && cd build && \
     make install
 
 # Init target runner
-FROM node:20-slim AS runner
+FROM node:24-slim AS runner
 
 SHELL ["/bin/bash", "-c"]
 
@@ -161,7 +161,7 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/*
 
-RUN pip3 install whisper-ctranslate2==0.4.6 --break-system-packages
+RUN pip3 install whisper-ctranslate2==0.5.2 --break-system-packages
 
 # Un-privileged user running the application
 ARG DOCKER_USER
