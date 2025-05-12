@@ -13,12 +13,20 @@ DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 default: h
 
 build: ## Build peertube-runner image
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-rockchip:latest -f Dockerfile-ffmpeg-rockchip .
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner:latest .
 .PHONY: build
 
+build-rockchip: ## Build peertube-runner image with ffmpeg-rockchip
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-rockchip:latest -f Dockerfile-ffmpeg-rockchip .
+.PHONY: build-rockchip
+
 build-whisper_ctranslate2: ## Build peertube-runner image with whisper-ctranslate2
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner-rockchip:latest-ctranslate -f Dockerfile-ffmpeg-rockchip .
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner:latest-whisper_ctranslate2 .
 .PHONY: build-whisper_ctranslate2
+
+build-rockchip-ctranslate: ## Build peertube-runner image with ffmpeg-rockchip and whisper-ctranslate2
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner-rockchip:latest-ctranslate -f Dockerfile-ffmpeg-rockchip .
+.PHONY: build-rockchip-ctranslate
 
 h: # short default help task
 	@echo "$(BOLD)Marsha Makefile$(RESET)"

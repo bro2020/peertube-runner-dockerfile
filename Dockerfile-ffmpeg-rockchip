@@ -72,9 +72,14 @@ RUN mkdir -p build && cd build && \
 # Build ffmpeg
     git clone --depth=1 https://github.com/nyanmisaka/ffmpeg-rockchip.git ffmpeg && \
     cd ffmpeg && \
+    echo '6.1.1' > VERSION && \
     ./configure \
       --prefix=/usr/local \
       --extra-libs="-lpthread -lm" \
+      --extra-version=2+b1 \
+      --disable-symver \
+      --enable-static \
+      --disable-ffplay \
       --enable-gnutls \
       --enable-gpl \
       --enable-nonfree \
@@ -106,37 +111,21 @@ COPY --from=ffmpeg /usr/local/ /usr/local/
 
 RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/debian.sources && \
     apt update && apt install -y \
+      libva2 \
       libva-drm2 \
-      libsdl2-2.0-0 \
-      libsndio7.0 \
-      libxv1 \
+      libva-x11-2 \
       libfdk-aac2 \
-      libasound2 \
       libaom3 \
       libdav1d6 && \
     apt install -y \
       libass9 \
-      libsrt1.5-gnutls \
       libmp3lame0 \
       libvpx7 \
       libx264-164 \
       libx265-199 \
-      libopus0 \
-      libva2 \
       libvdpau1 \
-      libvorbis0a \
-      libvorbisenc2 \
-      libvorbisfile3 \
-      libxcb-dri2-0 \
-      libxcb-dri3-0 \
-      libxcb-glx0 \  
-      libxcb-present0 \
-      libxcb-randr0 \ 
-      libxcb-render0 \
       libxcb-shape0 \
-      libxcb-shm0 \  
-      libxcb-sync1 \
-      libxcb-xfixes0 && \
+      libxcb-shm0 && \  
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/*
 
