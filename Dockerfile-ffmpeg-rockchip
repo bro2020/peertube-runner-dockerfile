@@ -7,7 +7,7 @@ WORKDIR "${WORKDIR}"
 
 # Install deps
 RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/debian.sources && \
-    apt update -qq && apt -y install \
+    apt update -qq && apt install -y --no-install-recommends --no-install-suggests \
       autoconf \
       automake \
       build-essential \
@@ -77,7 +77,6 @@ RUN mkdir -p build && cd build && \
       --prefix=/usr/local \
       --extra-libs="-lpthread -lm" \
       --extra-version=2+b1 \
-      --disable-symver \
       --enable-static \
       --disable-ffplay \
       --enable-gnutls \
@@ -110,7 +109,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
 COPY --from=ffmpeg /usr/local/ /usr/local/
 
 RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/debian.sources && \
-    apt update && apt install -y \
+    apt update && apt install -y --no-install-recommends --no-install-suggests \
       libva2 \
       libva-drm2 \
       libva-x11-2 \
@@ -127,12 +126,16 @@ RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/deb
       libxcb-shape0 \
       libxcb-shm0 && \  
     rm -rf /var/lib/apt/lists/* && \
-    rm -rf /var/cache/apt/*
+    rm -rf /var/cache/apt/* && \
+    rm -vrf /usr/share/doc/* && \
+    rm -vrf /usr/share/man/* && \
+    rm -vrf /usr/local/share/doc/* && \
+    rm -vrf /usr/local/share/man/*
 
 COPY files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Install peertube-runner
-RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.2"}
+RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.3"}
 
 # Un-privileged user running the application
 ARG DOCKER_USER
@@ -145,10 +148,14 @@ FROM runner AS whisper_ctranslate2
 
 USER root:root
 
-RUN apt update && \
-    apt install -y python3-pip && \
+RUN apt update && apt install -y --no-install-recommends --no-install-suggests \
+      python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
-    rm -rf /var/cache/apt/*
+    rm -rf /var/cache/apt/* && \
+    rm -vrf /usr/share/doc/* && \
+    rm -vrf /usr/share/man/* && \
+    rm -vrf /usr/local/share/doc/* && \
+    rm -vrf /usr/local/share/man/*
 
 RUN pip3 install whisper-ctranslate2==0.5.2 --break-system-packages
 
