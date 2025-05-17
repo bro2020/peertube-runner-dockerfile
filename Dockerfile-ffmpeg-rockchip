@@ -40,7 +40,8 @@ RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/deb
       libxcb1-dev \
       libxcb-shm0-dev \
       libxcb-xfixes0-dev \
-      libdrm-dev
+      libdrm-dev \
+      ca-certificates
 
 # Build MPP
 RUN mkdir -p build && cd build && \
