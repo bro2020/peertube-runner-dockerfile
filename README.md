@@ -43,7 +43,7 @@ $ docker run --rm -it \
     -e PEERTUBE_RUNNER_REGISTERED_INSTANCE_URL=http://localhost:9000 \
     -e PEERTUBE_RUNNER_REGISTERED_INSTANCE_RUNNER_TOKEN=foo-token \
     -e PEERTUBE_RUNNER_REGISTERED_INSTANCE_RUNNER_NAME=instance-name \
-    peertube-runner:latest
+    peertube-runner-rockchip:latest
 ```
 
 The default command run in the container is `peertube-runner server` which run a peertube-runner server.
