@@ -1,14 +1,21 @@
-FROM node:20-slim AS runner
+FROM node:24-slim AS runner
+
+SHELL ["/bin/bash", "-c"]
 
 # Install FFMPEG
 RUN apt update && \
-    apt install -y ffmpeg && \
-    rm -rf /var/lib/apt/lists/*
+    apt install ffmpeg -y --no-install-recommends --no-install-suggests && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/* && \
+    rm -vrf /usr/share/doc/* && \
+    rm -vrf /usr/share/man/* && \
+    rm -vrf /usr/local/share/doc/* && \
+    rm -vrf /usr/local/share/man/*
 
 COPY files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Install peertube-runner
-RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.0.22"}
+RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.3"}
 
 # Un-privileged user running the application
 ARG DOCKER_USER
@@ -22,10 +29,17 @@ FROM runner AS whisper_ctranslate2
 USER root:root
 
 RUN apt-get update && \
-    apt install -y python3-pip && \
-    rm -rf /var/lib/apt/lists/*
+    apt install python3-pip -y --no-install-recommends --no-install-suggests && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/* && \
+    rm -vrf /usr/share/doc/* && \
+    rm -vrf /usr/share/man/* && \
+    rm -vrf /usr/local/share/doc/* && \
+    rm -vrf /usr/local/share/man/*
 
-RUN pip3 install whisper-ctranslate2==0.4.6 --break-system-packages
+ARG WHISPER_CTRANSLATE2_VERSION
+
+RUN pip3 install whisper-ctranslate2==${WHISPER_CTRANSLATE2_VERSION:-"0.5.3"} --break-system-packages
 
 # Un-privileged user running the application
 ARG DOCKER_USER
