@@ -20,7 +20,7 @@ build-rockchip: ## Build peertube-runner image with ffmpeg-rockchip
 	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-rockchip:latest -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip
 
-build-amd_ctranslate: ## Build peertube-runner image with whisper-ctranslate2
+build-amd-ctranslate: ## Build peertube-runner image with whisper-ctranslate2
 	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner:latest-ctranslate .
 .PHONY: build-whisper_ctranslate2
 
