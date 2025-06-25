@@ -19,7 +19,7 @@ RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.3"}
 
 # Un-privileged user running the application
 ARG DOCKER_USER
-USER ${DOCKER_USER}
+USER ${DOCKER_USER:-root}
 
 ENTRYPOINT [ "entrypoint" ]
 CMD [ "peertube-runner", "server" ]
