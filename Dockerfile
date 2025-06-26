@@ -14,7 +14,7 @@ RUN apt update && \
     ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}/bin/ffmpeg && \
     tar -xf /tmp/ffmpeg.tar.xz --transform "s/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}\/bin/usr\/local\/bin/" \
     ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}/bin/ffprobe && \
-    apt purge xz-utils curl ca-certificates -y && \
+    apt purge xz-utils curl ca-certificates -y --autoremove && \
     rm -rf /tmp/ffmpeg.tar.xz && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/* && \
