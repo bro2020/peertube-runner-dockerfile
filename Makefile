@@ -13,15 +13,15 @@ DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 default: h
 
 build-amd: ## Build peertube-runner image
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner:latest .
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-amd:latest .
 .PHONY: build
 
 build-rockchip: ## Build peertube-runner image with ffmpeg-rockchip
 	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-rockchip:latest -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip
 
-build-amd_ctranslate: ## Build peertube-runner image with whisper-ctranslate2
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner:latest-ctranslate .
+build-amd-ctranslate: ## Build peertube-runner image with whisper-ctranslate2
+	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner-amd:latest-ctranslate .
 .PHONY: build-whisper_ctranslate2
 
 build-rockchip-ctranslate: ## Build peertube-runner image with ffmpeg-rockchip and whisper-ctranslate2
