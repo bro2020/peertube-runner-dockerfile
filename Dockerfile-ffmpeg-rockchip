@@ -136,7 +136,9 @@ RUN sed -i 's|main|main non-free non-free-firmware|' /etc/apt/sources.list.d/deb
 COPY files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Install peertube-runner
-RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION:-"0.1.3"}
+ARG PEERTUBE_RUNNER_VERSION=0.1.3
+
+RUN npm install -g @peertube/peertube-runner@${PEERTUBE_RUNNER_VERSION}
 
 # Un-privileged user running the application
 ARG DOCKER_USER
@@ -158,9 +160,9 @@ RUN apt update && apt install -y --no-install-recommends --no-install-suggests \
     rm -vrf /usr/local/share/doc/* && \
     rm -vrf /usr/local/share/man/*
 
-ARG WHISPER_CTRANSLATE2_VERSION
+ARG WHISPER_CTRANSLATE2_VERSION=0.5.3
 
-RUN pip3 install whisper-ctranslate2==${WHISPER_CTRANSLATE2_VERSION:-"0.5.3"} --break-system-packages
+RUN pip3 install whisper-ctranslate2==${WHISPER_CTRANSLATE2_VERSION} --break-system-packages
 
 # Un-privileged user running the application
 ARG DOCKER_USER
