@@ -10,9 +10,9 @@ RUN apt update && \
     apt install xz-utils curl ca-certificates -y --no-install-recommends --no-install-suggests && \
     curl -sL "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}.tar.xz" \
     -o /tmp/ffmpeg.tar.xz && \
-    tar -xf /tmp/ffmpeg.tar.xz --transform "s/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}\/bin/\/usr\/local\/bin/" \
+    tar -xf /tmp/ffmpeg.tar.xz --transform "s/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}\/bin/usr\/local\/bin/" \
     ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}/bin/ffmpeg && \
-    tar -xf /tmp/ffmpeg.tar.xz --transform "s/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}\/bin/\/usr\/local\/bin/" \
+    tar -xf /tmp/ffmpeg.tar.xz --transform "s/ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}\/bin/usr\/local\/bin/" \
     ffmpeg-n${FFMPEG_VERSION}-latest-linux64-gpl-${FFMPEG_VERSION}/bin/ffprobe && \
     apt purge xz-utils curl ca-certificates -y && \
     rm -rf /tmp/ffmpeg.tar.xz && \
