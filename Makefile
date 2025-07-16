@@ -7,25 +7,94 @@ DOCKER_UID           = $(shell id -u)
 DOCKER_GID           = $(shell id -g)
 DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 
+# ENV
+include .env
+
 # ==============================================================================
 # RULES
 
 default: h
 
-build-amd: ## Build peertube-runner image
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-amd:latest .
-.PHONY: build
+build-amd: ## Build peertube-runner image for amd/intel
+	docker buildx build \
+          --build-arg DOCKER_USER=$(DOCKER_USER) \
+          --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+          --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+          --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target runner \
+	  -t peertube-runner-amd:latest .
+.PHONY: build-amd
+
+build-arm: ## Build peertube-runner image for arm
+	docker buildx build \
+	  --build-arg DOCKER_USER=$(DOCKER_USER) \
+	  --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+	  --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target runner \
+	  -t ${REGISTRI_NAME}peertube-runner-arm:latest \
+	  -f Dockerfile-arm .
+.PHONY: build-arm
 
 build-rockchip: ## Build peertube-runner image with ffmpeg-rockchip
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target runner -t peertube-runner-rockchip:latest -f Dockerfile-ffmpeg-rockchip .
+	docker buildx build \
+          --build-arg DOCKER_USER=$(DOCKER_USER) \
+          --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+          --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+          --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target runner \
+	  -t ${REGISTRI_NAME}peertube-runner-rockchip:latest \
+	  -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip
 
-build-amd-ctranslate: ## Build peertube-runner image with whisper-ctranslate2
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner-amd:latest-ctranslate .
-.PHONY: build-whisper_ctranslate2
+build-amd-ctranslate: ## Build peertube-runner image for amd with whisper-ctranslate2
+	docker buildx build  \
+          --build-arg DOCKER_USER=$(DOCKER_USER) \
+          --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+          --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+          --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target whisper_ctranslate2 \
+	  -t ${REGISTRI_NAME}peertube-runner-amd:latest-ctranslate .
+.PHONY: build-amd-ctranslate
+
+build-arm-ctranslate: ## Build peertube-runner image for arm with whisper-ctranslate2
+	docker buildx build  \
+          --build-arg DOCKER_USER=$(DOCKER_USER) \
+          --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+          --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+          --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+          --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target whisper_ctranslate2 \
+	  -t ${REGISTRI_NAME}peertube-runner-arm:latest-ctranslate \
+	  -f Dockerfile-arm .
+.PHONY: build-arm-ctranslate
 
 build-rockchip-ctranslate: ## Build peertube-runner image with ffmpeg-rockchip and whisper-ctranslate2
-	docker buildx build --build-arg DOCKER_USER=$(DOCKER_USER) --target whisper_ctranslate2 -t peertube-runner-rockchip:latest-ctranslate -f Dockerfile-ffmpeg-rockchip .
+	docker buildx build  \
+          --build-arg DOCKER_USER=$(DOCKER_USER) \
+          --build-arg FFMPEG_VERSION=${FFMPEG_VERSION} \
+          --build-arg PEERTUBE_RUNNER_VERSION=${PEERTUBE_RUNNER_VERSION} \
+          --build-arg WHISPER_CTRANSLATE2_VERSION=${WHISPER_CTRANSLATE2_VERSION} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
+	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
+	  --target whisper_ctranslate2 \
+	  -t ${REGISTRI_NAME}peertube-runner-rockchip:latest-ctranslate \
+	  -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip-ctranslate
 
 h: # short default help task
