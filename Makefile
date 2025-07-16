@@ -25,7 +25,7 @@ build-amd: ## Build peertube-runner image for amd/intel
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target runner \
-	  -t peertube-runner-amd:latest .
+	  -t ${REGISTRY_NAME}peertube-runner-amd:latest .
 .PHONY: build-amd
 
 build-arm: ## Build peertube-runner image for arm
@@ -38,7 +38,7 @@ build-arm: ## Build peertube-runner image for arm
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target runner \
-	  -t ${REGISTRI_NAME}peertube-runner-arm:latest \
+	  -t ${REGISTRY_NAME}peertube-runner-arm:latest \
 	  -f Dockerfile-arm .
 .PHONY: build-arm
 
@@ -52,7 +52,7 @@ build-rockchip: ## Build peertube-runner image with ffmpeg-rockchip
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target runner \
-	  -t ${REGISTRI_NAME}peertube-runner-rockchip:latest \
+	  -t ${REGISTRY_NAME}peertube-runner-rockchip:latest \
 	  -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip
 
@@ -66,7 +66,7 @@ build-amd-ctranslate: ## Build peertube-runner image for amd with whisper-ctrans
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target whisper_ctranslate2 \
-	  -t ${REGISTRI_NAME}peertube-runner-amd:latest-ctranslate .
+	  -t ${REGISTRY_NAME}peertube-runner-amd:latest-ctranslate .
 .PHONY: build-amd-ctranslate
 
 build-arm-ctranslate: ## Build peertube-runner image for arm with whisper-ctranslate2
@@ -79,7 +79,7 @@ build-arm-ctranslate: ## Build peertube-runner image for arm with whisper-ctrans
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
           --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target whisper_ctranslate2 \
-	  -t ${REGISTRI_NAME}peertube-runner-arm:latest-ctranslate \
+	  -t ${REGISTRY_NAME}peertube-runner-arm:latest-ctranslate \
 	  -f Dockerfile-arm .
 .PHONY: build-arm-ctranslate
 
@@ -93,7 +93,7 @@ build-rockchip-ctranslate: ## Build peertube-runner image with ffmpeg-rockchip a
 	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH=${PEERTUBE_RUNNER_TRANSCRIPTION_ENGINE_PATH} \
 	  --build-arg PEERTUBE_RUNNER_TRANSCRIPTION_MODEL=${PEERTUBE_RUNNER_TRANSCRIPTION_MODEL} \
 	  --target whisper_ctranslate2 \
-	  -t ${REGISTRI_NAME}peertube-runner-rockchip:latest-ctranslate \
+	  -t ${REGISTRY_NAME}peertube-runner-rockchip:latest-ctranslate \
 	  -f Dockerfile-ffmpeg-rockchip .
 .PHONY: build-rockchip-ctranslate
 
